@@ -14,3 +14,24 @@ services:
     command: streamlit run app.py --server.address 0.0.0.0 --server.port 8501
     ports:
       - "8501:8501"
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: perfumes_rec_db
+    restart: always
+    environment:
+      POSTGRES_DB: perfumes_rec_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d perfumes_rec_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
