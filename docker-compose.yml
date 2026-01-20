@@ -1,5 +1,7 @@
 services:
   backend:
+    environment:
+      DATABASE_URL: postgresql://admin:admin@postgres:5432/perfumes_rec_db
     build:
       context: backend   
       dockerfile: Dockerfile

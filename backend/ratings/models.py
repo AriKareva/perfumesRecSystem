@@ -1,9 +1,10 @@
+from db.connection import Base
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
-class Ratings:
+class Ratings(Base):
     __tablename__ = 'ratings'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -13,5 +14,5 @@ class Ratings:
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     perfume_id = Column(Integer, ForeignKey('perfumes.id'), nullable=False)
 
-    user = relationship('Ratings', back_populates='user')
-    perfume = relationship('Ratings', back_populates='perfume')
+    user = relationship('Users', back_populates='rating')
+    perfume = relationship('Perfumes', back_populates='rating')
