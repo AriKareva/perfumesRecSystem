@@ -108,10 +108,7 @@ class PerfumeResponse(Perfume):
 class PerfumeDelete(Perfume):
     ...
 
-#     INSERT INTO concentration (concentration_title, concentration_code) VALUES
-#     ('Eau de Cologne','2-4%'),     -- Одеколон (2-4%)
-#     ('Eau de Toilette', '5-15%'),    -- Туалетная вода (5-15%)
-#     ('Eau de Parfum', '15-20%'),      -- Парфюмированная вода (15-20%)
-#     ('Parfum', '20-30%'),             -- Парфюм (20-30%)
-#     ('Extrait de Parfum', '30-40%')   -- Экстракт (30-40%)
-# ;
+
+
+class MessageResponse(BaseModel):
+    message : str = Field()

@@ -1,4 +1,4 @@
-from http.server import HTTPServer
+from fastapi.security import HTTPBearer
 from auth.security.password_hasher import hash_password, verify_password
 from auth.security.jwt_handler import decode_access_token
 from users.schemas import UserCreate
@@ -25,7 +25,7 @@ def check_email_not_exists(email : str, db : Session = Depends(get_db)):
                 detail="Пользователь с таким email уже существует"
             )
     
-security = HTTPServer()
+security = HTTPBearer()
 
 async def get_current_user(credentials = Depends(security)) -> dict:
     token = credentials.credentials

@@ -1,7 +1,7 @@
 from ratings.models import Ratings
 from perfumes.models import Brands, PerfumeNotes, Perfumes
 from db.connection import get_db
-from perfumes.schemas import PerfumeCreate, PerfumeUpdate, PerfumeResponse, PerfumeDelete
+from perfumes.schemas import MessageResponse, PerfumeCreate, PerfumeUpdate, PerfumeResponse, PerfumeDelete
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
@@ -44,12 +44,22 @@ async def get_5_rand_perfumes(user_id : int, perfumes_to_rate_n : int = 5, db: S
 
     return rand_perfumes
 
-# @perfumes_router.get('/{name}', response_model=PerfumeResponse)
-# async def get_perfume_by_name(name : str, db : Session = Depends(get_db)):
-#     perfume = db.query(Perfumes).filter(Perfumes.name == name).all()
+@perfumes_router.get('/search', response_model=Union[List[PerfumeResponse], MessageResponse])
+async def search_perfumes(user_query : Optional[str] = None, db : Session = Depends(get_db)):
+    perfumes = db.query(Perfumes)\
+        .options(
+            joinedload(Perfumes.brand),
+            joinedload(Perfumes.concentration),
+            joinedload(Perfumes.perfume_note) 
+        )\
+        .join(Brands, Perfumes.brand_id == Brands.id) 
 
-#     return perfume
-
-# @perfumes_router.get('/search', response_model=dict)
-# async def serch_perfumes(db: Session = Depends(get_db)):
-#     return {'message' : 'аааааааааааааааааааааааааааааааа :('}
+    if user_query:
+        perfumes = perfumes.filter(
+                or_(
+                    Perfumes.name.ilike(f"%{user_query}%"),
+                    Brands.name.ilike(f"%{user_query}%"),
+                )
+            )
+        
+    return perfumes.all()
