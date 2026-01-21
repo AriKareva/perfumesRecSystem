@@ -26,7 +26,7 @@ class Concentration(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     concentration_title = Column(String(255), nullable=False, unique=True)
-    concentration_code = Column(Integer, nullable=False, unique=True)
+    # concentration_code = Column(Integer, nullable=False, unique=True)
 
     perfume = relationship('Perfumes', back_populates='concentration')
 

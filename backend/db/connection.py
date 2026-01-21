@@ -37,7 +37,7 @@ SessionLocal = sessionmaker(
 def init_db():
     logger.info('Создание таблиц БД')
     try:
-        Base.metadata.drop_all(bind=db_engine)
+        # Base.metadata.drop_all(bind=db_engine)
         Base.metadata.create_all(bind=db_engine)
         logger.info('Таблицы БД пересозданы')
     

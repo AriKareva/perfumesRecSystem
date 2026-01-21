@@ -7,7 +7,7 @@ from datetime import datetime
 class Concentration(BaseModel):
     id: int = Field()
     concentration_title : str = Field(min_length=2)
-    concentration_code: str = Field()
+    # concentration_code: str = Field()
 
 class ConcentrationCreate(Concentration):
     ...

@@ -1,31 +1,33 @@
 from datetime import datetime
 from typing import Optional
-from Pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
 
 class User(BaseModel):
     nickname : str = Field()
-    email : EmailStr = Field()
 
 class UserCreate(User):
-    ...
+    email : EmailStr = Field()
+    password : str = Field()
+    password_2 : str = Field()
 
 class UserUpdate(User):
     ...
 
 class UserResponse(User):
-    ...
-
+    email : EmailStr = Field()
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 class UserDelete(User):
     ...
 
+class UserLogin(User):
+    password : str = Field()
 
-def validate_username(username):
-    ...
 
-def validate_password(password):
-    ...
 
-def confirm_password(password1, password2):
-    ...
+class TokenResponse(BaseModel):
+    access_token : str = Field()
+    token_type : str = Field()
