@@ -1,3 +1,8 @@
-from fastapi import APIRuter
+from auth.user_service import get_current_user
+from users.schemas import User, UserResponse
+from users.models import Users
+from fastapi import APIRouter, Depends
 
-user_router = APIRuter(perfix='/user', tags=['user'])
+
+users_router = APIRouter(prefix='/users', tags=['users'])
+

@@ -17,5 +17,5 @@ async def register_user(user_data : UserCreate, db : Session = Depends(get_db)):
 @auth_router.post('/login', response_model=TokenResponse)
 async def login_user(user_data : UserLogin, db: Session = Depends(get_db)):
     user = UserService.verify_creditals(user_data, db)
-    access_token = create_access_token(user.id, user.email)
-    return {"access_token": access_token, "token_type": "bearer"}
+    access_token = create_access_token(user.id, user.nickname)
+    return {"access_token": access_token, "token_type": "Bearer"}

@@ -1,7 +1,7 @@
 from fastapi.security import HTTPBearer
 from auth.security.password_hasher import hash_password, verify_password
 from auth.security.jwt_handler import decode_access_token
-from users.schemas import UserCreate
+from users.schemas import User, UserCreate
 from users.models import Users
 from sqlalchemy.orm import Session
 from db.connection import get_db
@@ -27,18 +27,29 @@ def check_email_not_exists(email : str, db : Session = Depends(get_db)):
     
 security = HTTPBearer()
 
-async def get_current_user(credentials = Depends(security)) -> dict:
-    token = credentials.credentials
-    user = decode_access_token(token)
+async def get_current_user(
+    credentials = Depends(security),
+    db: Session = Depends(get_db)
+) -> Users:
     
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверный или истёкший токен",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    try:
+        token = credentials.credentials
+        user_data = decode_access_token(token)
+
+        if user_data is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        user = db.query(Users).filter(Users.id == user_data["id"]).first()
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
     
-    return user
+        return user
+        
+    except KeyError as e:
+        raise HTTPException(status_code=500, detail=f"Key error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 class UserService:

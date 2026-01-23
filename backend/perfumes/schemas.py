@@ -46,7 +46,7 @@ class BrandDelete(Brand):
 
 # ноты
 class Note(BaseModel):
-    id : int = Field()
+    id : int = Field(...)
     note_name : Optional[str] = None
 
 class NoteCreate(Note):
@@ -66,7 +66,7 @@ class NoteDelete(Note):
 
 # типы нот
 class NoteType(BaseModel):
-    id : int = Field()
+    id : int = Field(...)
     note_type_name : Optional[str] = None
 
 class NoteTypeCreate(NoteType):
@@ -86,7 +86,7 @@ class NoteTypesDelete(NoteType):
 
 # парфюмы
 class Perfume(BaseModel):
-    id : int = Field()
+    id : int = Field(...)
     name : str = Field(min_length=2)
     brand : Optional[Brand] = None
     price : Optional[float] = None
@@ -111,4 +111,4 @@ class PerfumeDelete(Perfume):
 
 
 class MessageResponse(BaseModel):
-    message : str = Field()
+    message : str = Field(...)

@@ -1,14 +1,47 @@
 import logging
+from urllib.request import Request
 from db.connection import init_db, Base, db_engine
 from fastapi.openapi.utils import get_openapi
 from fastapi import FastAPI
 from perfumes.routes import perfumes_router
 from auth.routes import auth_router
+from ratings.routes import ratings_router
+from fastapi.middleware.cors import CORSMiddleware
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+app = FastAPI(
+    title="Perfume Recommendation System",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    swagger_ui_parameters={
+        "defaultModelsExpandDepth": -1,
+        "displayRequestDuration": True,
+    },
+    security=[{"HTTPBearer": []}]
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Временно для отладки
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.middleware("http")
+async def log_headers(request: Request, call_next):
+    auth_header = request.headers.get("authorization") or request.headers.get("Authorization")
+    print(f"=== Request Headers ===")
+    print(f"Auth Header: {auth_header}")
+    print(f"All Headers: {dict(request.headers)}")
+    
+    response = await call_next(request)
+    print(f"Response Status: {response.status_code}")
+    return response
 
 @app.on_event("startup")
 async def app_start():
@@ -22,36 +55,4 @@ async def root():
 
 app.include_router(perfumes_router)
 app.include_router(auth_router)
-
-
-# Конфигурация OpenAPI для Swagger с поддержкой Bearer токена
-def custom_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-    
-    openapi_schema = get_openapi(
-        title='Perfume Recomendation System',
-        version='1.0.0',
-        description='API для системы подбора парфюмов',
-        routes=app.routes,
-    )
-    
-    openapi_schema["components"]["securitySchemes"] = {
-        "Bearer": {
-            "type": "http",
-            "scheme": "bearer",
-            "bearerFormat": "JWT",
-        }
-    }
-    
-    # Добавляем Bearer ко всем protected endpoints
-    for path in openapi_schema["paths"].values():
-        for method in path.values():
-            if isinstance(method, dict):
-                if "connections" in str(method):
-                    method["security"] = [{"Bearer": []}]
-    
-    app.openapi_schema = openapi_schema
-    return app.openapi_schema
-
-app.openapi = custom_openapi
+app.include_router(ratings_router)

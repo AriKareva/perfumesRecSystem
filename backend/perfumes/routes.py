@@ -1,3 +1,4 @@
+from auth.user_service import get_current_user
 from ratings.models import Ratings
 from perfumes.models import Brands, PerfumeNotes, Perfumes
 from db.connection import get_db
