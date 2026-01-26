@@ -24,7 +24,7 @@ def check_email_not_exists(email : str, db : Session = Depends(get_db)):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Пользователь с таким email уже существует"
             )
-    
+
 security = HTTPBearer()
 
 async def get_current_user(
